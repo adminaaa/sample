@@ -30,10 +30,14 @@ class StaticPagesController extends Controller
         //
         return view('static_pages/help');
     }
+
     public function about(){
         return view('static_pages/about');
     }
 
+    public function sign(){
+        return view('static_pages/sign');
+    }
     /**
      * Store a newly created resource in storage.
      *
