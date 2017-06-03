@@ -13,10 +13,12 @@ class UserController extends Controller
     public function create(){
         return view('static_pages.create');
     }
+
     public function show($id){
         $user = User::findOrFail($id);
         return view('users.show', compact('user'));
     }
+
     public function store(Request $request){
         $this->validate($request,[
             'name' => 'required|min:3|max:15',
@@ -28,6 +30,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password)
         ]);
+        Auth::login($user);
         session()->flash('success',"欢迎您，亲爱的$user->name,您将在这里开启一段新的旅程~");
         return redirect()->Route('users.show',[$user->id]);
     }
