@@ -10,8 +10,14 @@ class UserController extends Controller
         $this->middleware('auth' ,[
             'only' => ['edit','update']
         ]);
+        $this->middleware('guest' ,[
+            'only' => ['create']
+        ]);
     }
-
+    public function index(){
+        $users = User::paginate(10);
+        return view('users.index',compact('users'));
+    }
     public function create(){
         return view('static_pages.create');
     }
@@ -23,6 +29,7 @@ class UserController extends Controller
 
     public function edit($id){
         $user = User::findOrFail($id);
+        $this->authorize('update', $user);
         return view('users.edit', compact('user'));
     }
 
@@ -33,7 +40,7 @@ class UserController extends Controller
         ]);
 
         $user = User::findOrFail($id);
-
+        $this->authorize('update',$user);
         $data = [];
         $data['name'] = $request->name;
         if ($request->password) {
@@ -60,5 +67,14 @@ class UserController extends Controller
         Auth::login($user);
         session()->flash('success',"欢迎您，亲爱的$user->name,您将在这里开启一段新的旅程~");
         return redirect()->Route('users.show',[$user->id]);
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $this->authorize('destroy', $user);
+        $user->delete();
+        session()->flash('success', '成功删除用户！');
+        return back();
     }
 }

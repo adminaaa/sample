@@ -14,6 +14,11 @@ class SessionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct(){
+        $this->middleware('guest' ,[
+            'only' => ['create']
+        ]);
+    }
     public function index()
     {
         //
@@ -49,7 +54,7 @@ class SessionController extends Controller
         ];
         if(Auth::attempt($credentials,$request->has('remember'))){
             session()->flash('success','登录成功！');
-            return redirect()->route('users.show', [Auth::user()]);
+            return redirect()->intended(route('users.show', [Auth::user()]));
         }else{
             session()->flash('danger','登录失败，邮箱或密码错误！');
             return redirect()->back();
